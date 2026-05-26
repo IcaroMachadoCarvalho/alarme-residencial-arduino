@@ -50,7 +50,7 @@ Para garantir estabilidade, confiabilidade e evitar o uso de funções bloqueant
   * **Se o PIN correto for digitado:** O sistema retorna para o estado `DESARMADO`.
 
 ### 3. Estado: `DISPARADO` (Invasão Detectada)
-* **Comportamento:** O alarme foi violado. Uma sirene de dupla frequência (alternando entre 600Hz e 1000Hz) é emitida pelo Buzzer, enquanto o LED pisca rapidamente em intervalos de 150ms utilizando a função `millis()`.
+* **Comportamento:** O alarme foi violado. Uma sirene de com a frequência de 1000Hz é emitida pelo Buzzer, enquanto o LED pisca acende após o intervalo de 150ms utilizando a função `millis()`.
 * **Interface LCD:** Exibe alertas piscantes de `!! ALERTA !! / INTRUSO DETECTADO`.
 * **Transição de Estado:** * O sistema ignora novas detecções do PIR e se concentra em monitorar o Botão de Reset. Assim que o botão físico de Reset for pressionado, os atuadores são desligados e o sistema regressa com segurança para o estado inicial `DESARMADO`.
 
