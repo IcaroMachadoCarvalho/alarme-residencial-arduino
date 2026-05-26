@@ -68,9 +68,9 @@ O código foi otimizado dividindo-se em seções modulares:
 
 ## 🚀 Como Executar o Projeto
 
-1. Acesse o ambiente do **Tinkercad**.
+1. Acesse o [projeto no tinkercard](https://www.tinkercad.com/things/cL1SjatfWue/editel?returnTo=%2Fdashboard&sharecode=TMD2FiFgIdbkQWfjjFK_bpdH5C2asmg4G9EoTDRcouQ)
 2. Execute a simulação ou faça uma cópia para sua conta
-3. Copie o código fonte contido no arquivo `alarme-residencial-arduino.ino` (ou fornecido na entrega) e cole no editor do simulador.
+3. Copie o código fonte contido no arquivo `alarme-residencial-arduino.ino` e cole no editor do simulador, se não vier junto na cópia.
 4. Inicie a simulação.
 5. **Teste de Arme:** Digite `1234#` no teclado. O sistema passará para o modo ARMADO.
 6. **Teste de Disparo:** Clique sobre o Sensor PIR e simule um movimento. O alarme disparará (LED e Som ativos).
