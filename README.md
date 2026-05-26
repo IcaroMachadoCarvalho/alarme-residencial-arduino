@@ -4,6 +4,19 @@ Este projeto consiste em um **Sistema de Alarme Residencial** microcontrolado ut
 
 ---
 
+## 📝 Descrição e Requisitos do Projeto 
+
+### Objetivo Geral
+Desenvolver um sistema de alarme residencial utilizando um Arduino, sensores e atuadores. O sistema deve ser capaz de detectar movimentos e emitir alertas visuais e sonoros.
+
+### Requisitos Funcionais Obrigatórios
+1. **Sensor:** Utilize ao menos um sensor para detectar a presença de intrusos. Quando o sensor detectar algo, um alarme sonoro (buzzer) e um alarme visual (LED) devem ser ativados.
+2. **Teclado Matricial:** Utilize um teclado matricial para permitir que o usuário ative ou desative o sistema de alarme. O alarme só deve ser ativado/desarmado quando o usuário inserir um código PIN correto (`1234`).
+3. **Display LCD:** Utilize um display LCD 16x2 para mostrar o status do sistema (ativado, desativado, alarme disparado). Mostre mensagens apropriadas quando o usuário inserir o código PIN.
+4. **Botão de Reset:** Adicione um botão de reset para permitir que o usuário desligue o alarme manualmente após ele ser disparado. Após o reset, o sistema deve retornar ao estado de espera.
+
+---
+
 ## 🛠️ Arquitetura do Sistema
 
 O projeto foi projetado utilizando a abordagem de **Sistemas Embarcados com Edge Computing**, processando todas as tomadas de decisão e regras de negócio localmente no próprio microcontrolador, garantindo tempo de resposta imediato (tempo real).
@@ -15,7 +28,7 @@ O projeto foi projetado utilizando a abordagem de **Sistemas Embarcados com Edge
 * **Display de Interface:** LCD 16x2 com Módulo de Comunicação I2C.
 * **Atuador Sonoro:** Buzzer Piezoelétrico.
 * **Atuador Visual:** LED Difuso Vermelho + Resistor de 220Ω.
-* **Controle Manual:** Chave Táctil (Push Button) operando em modo `INPUT`.
+* **Controle Manual:** Chave Táctil (Push Button) operando em modo `INPUT` com resistor de *pull-down* físico ligado ao GND.
 
 ### Esquema de Conexões (Pinagem)
 
@@ -23,7 +36,7 @@ O projeto foi projetado utilizando a abordagem de **Sistemas Embarcados com Edge
 | :--- | :---: | :---: | :--- |
 | **LED (Alarme)** | `D2` | Saída Digital | Alerta visual de intrusão |
 | **Buzzer** | `D3` | Saída PWM/Digital | Sirene sonora de intrusão |
-| **Botão de Reset** | `D4` | Entrada Digital | Reset manual do sistema disparado |
+| **Botão de Reset** | `D4` | Entrada Digital (`INPUT`) | Reset manual ativo em `HIGH` (pressionado) |
 | **Sensor PIR** | `D5` | Entrada Digital | Detector de presença/movimento |
 | **Teclado (Linhas)** | `D13, D12, D11, D10` | Entrada/Saída | Varredura de linhas da matriz |
 | **Teclado (Colunas)**| `D9, D8, D7, D6` | Entrada/Saída | Varredura de colunas da matriz |
@@ -38,7 +51,7 @@ Para garantir estabilidade, confiabilidade e evitar o uso de funções bloqueant
 
 ### 1. Estado: `DESARMADO` (Aguardando Ativação)
 * **Comportamento:** O sistema fica em repouso. Os atuadores (LED e Buzzer) permanecem desligados.
-* **Interface LCD:** Exibe `1-DESARMADO` e solicita a inserção da senha. Conforme os dígitos são inseridos, caracteres `*` mascaram o PIN na tela por segurança.
+* **Interface LCD:** Exibe `1-DESARMADO` e solicita a inserção da senha. Conforme os dígitos são inseridos, caracteres `*` mascaram o PIN na tela por segurança logo após a string `"Senha: "`.
 * **Transição de Estado:** * Se o usuário digitar o PIN correto (`1234`) e pressionar `#`, o sistema limpa a memória temporária e avança para o estado `ARMADO`.
   * Se a tecla `*` for pressionada, limpa a digitação atual.
 
@@ -50,9 +63,9 @@ Para garantir estabilidade, confiabilidade e evitar o uso de funções bloqueant
   * **Se o PIN correto for digitado:** O sistema retorna para o estado `DESARMADO`.
 
 ### 3. Estado: `DISPARADO` (Invasão Detectada)
-* **Comportamento:** O alarme foi violado. Uma sirene de com a frequência de 1000Hz é emitida pelo Buzzer, enquanto o LED pisca acende após o intervalo de 150ms utilizando a função `millis()`.
-* **Interface LCD:** Exibe alertas piscantes de `!! ALERTA !! / INTRUSO DETECTADO`.
-* **Transição de Estado:** * O sistema ignora novas detecções do PIR e se concentra em monitorar o Botão de Reset. Assim que o botão físico de Reset for pressionado, os atuadores são desligados e o sistema regressa com segurança para o estado inicial `DESARMADO`.
+* **Comportamento:** O alarme foi violado. Uma sirene bitonal (alternando frequências) é emitida pelo Buzzer, enquanto o LED pisca de forma intermitente mudando de estado a cada ciclo de 150ms utilizando a função assíncrona `millis()`.
+* **Interface LCD:** Exibe alertas de `!! ALERTA !! / INTRUSO DETECTADO`.
+* **Transição de Estado:** * O sistema se concentra em monitorar o **Botão de Reset**. Como o pino está em modo `INPUT` com resistor externo de pull-down, ele permanece em `LOW`. Assim que o botão físico é pressionado, a leitura vai para `HIGH`, os atuadores são desligados e o sistema regressa com segurança para o estado inicial `DESARMADO`.
 
 ---
 
@@ -68,10 +81,10 @@ O código foi otimizado dividindo-se em seções modulares:
 
 ## 🚀 Como Executar o Projeto
 
-1. Acesse o [projeto no tinkercard](https://www.tinkercad.com/things/cL1SjatfWue/editel?returnTo=%2Fdashboard&sharecode=TMD2FiFgIdbkQWfjjFK_bpdH5C2asmg4G9EoTDRcouQ)
-2. Execute a simulação ou faça uma cópia para sua conta
-3. Copie o código fonte contido no arquivo `alarme-residencial-arduino.ino` e cole no editor do simulador, se não vier junto na cópia.
+1. Acesse o [projeto no Tinkercad](https://www.tinkercad.com/things/cL1SjatfWue/editel?returnTo=%2Fdashboard&sharecode=TMD2FiFgIdbkQWfjjFK_bpdH5C2asmg4G9EoTDRcouQ).
+2. Execute a simulação ou faça uma cópia para sua conta.
+3. Copie o código fonte contido no arquivo `alarme-residencial-arduino.ino` e cole no editor do simulador, caso não venha junto automaticamente na cópia.
 4. Inicie a simulação.
 5. **Teste de Arme:** Digite `1234#` no teclado. O sistema passará para o modo ARMADO.
-6. **Teste de Disparo:** Clique sobre o Sensor PIR e simule um movimento. O alarme disparará (LED e Som ativos).
-7. **Teste de Reset:** Clique no botão táctil (Reset) para desativar o alarme e voltar ao início.
+6. **Teste de Disparo:** Clique sobre o Sensor PIR e simule um movimento. O alarme disparará (LED piscando e som de sirene ativos).
+7. **Teste de Reset:** Clique na chave táctil conectada à porta 4 (Reset) para interromper os atuadores, limpar a memória e fazer o sistema retornar ao menu inicial `DESARMADO`.
